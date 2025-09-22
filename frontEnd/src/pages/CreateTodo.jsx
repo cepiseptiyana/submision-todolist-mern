@@ -84,7 +84,7 @@ const CreateTodo = () => {
 
           <Form.Item label={null}>
             <Button type="primary" htmlType="submit">
-              Submit
+              Create
             </Button>
           </Form.Item>
         </Form>

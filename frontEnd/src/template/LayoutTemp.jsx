@@ -27,8 +27,6 @@ const keyMap = {
 // Navigasi DEKSTOP
 const navigasiDekstop = [
   { label: "Todo List", key: keyMap.list.desktop },
-  { label: "Create Todo", key: keyMap.create.desktop },
-  { label: "Edit Todo", key: keyMap.edit.desktop },
   { label: "Manage Categories", key: keyMap.manage.desktop },
 ];
 
@@ -41,8 +39,6 @@ const navigasiMobile = [
     icon: <AlignLeftOutlined />,
     children: [
       { key: keyMap.list.mobile, label: "Todo List" },
-      { key: keyMap.create.mobile, label: "Create Todo" },
-      { key: keyMap.edit.mobile, label: "Edit Todo" },
       { key: keyMap.manage.mobile, label: "Manage Categories" },
     ],
   },

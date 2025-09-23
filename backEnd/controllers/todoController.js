@@ -16,11 +16,32 @@ exports.getAllTodos = async (req, res) => {
   }
 };
 
+// GET getTodoById
+exports.getTodoById = async (req, res, id) => {
+  try {
+    const todo = await Todo.findByPk(Number(id));
+
+    if (!todo) {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({ status: false, data: null, message: "Todo not found" })
+      );
+      return;
+    }
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ status: true, data: todo, message: null }));
+  } catch (error) {
+    res.writeHead(500, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({ status: false, data: null, message: error.message })
+    );
+  }
+};
+
 // CREATE
 exports.createTodo = async (req, res) => {
   try {
-    let body = "";
-
     const schema = Joi.object({
       title: Joi.string().min(3).required(),
       description: Joi.string().allow(""),
@@ -31,13 +52,24 @@ exports.createTodo = async (req, res) => {
     });
 
     // Kumpulin body request
+    let body = "";
     req.on("data", (chunk) => {
       body += chunk;
     });
 
     // kalau semua data sudah masuk
     req.on("end", async () => {
-      const data = JSON.parse(body);
+      let data;
+
+      // gagal jika body bukan JSON
+      try {
+        data = JSON.parse(body); // bisa gagal jika body bukan JSON
+      } catch (err) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(
+          JSON.stringify({ status: false, message: "Invalid JSON" })
+        );
+      }
 
       // ✅ validasi input
       const { error, value } = schema.validate(data);
@@ -66,29 +98,37 @@ exports.createTodo = async (req, res) => {
   }
 };
 
+// DELETE
 exports.deleteTodo = async (id, res) => {
-  const todo = await Todo.findByPk(Number(id));
+  try {
+    const todo = await Todo.findByPk(Number(id));
 
-  if (!todo) {
-    res.writeHead(404, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: false, message: "Todo not found" }));
-    return;
+    if (!todo) {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ status: false, message: "Todo not found." }));
+      return;
+    }
+
+    // DELETE
+    await todo.destroy();
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({ status: true, message: "Todo deleted successfully." })
+    );
+  } catch (err) {
+    res.writeHead(500, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ status: false, message: "Server error." }));
   }
-
-  // DELETE
-  await todo.destroy();
-  res.writeHead(200, { "Content-Type": "application/json" });
-  res.end(
-    JSON.stringify({ status: true, message: "Todo deleted successfully" })
-  );
 };
 
-exports.updateTodo = async (todoId, req, res) => {
+// UPDATE
+exports.updateTodo = async (id, req, res) => {
   try {
     let body = "";
 
     // cari todo
-    const todo = await Todo.findByPk(Number(todoId));
+    const todo = await Todo.findByPk(Number(id));
 
     // todo tidak ada
     if (!todo) {
@@ -97,7 +137,7 @@ exports.updateTodo = async (todoId, req, res) => {
       return;
     }
 
-    // validasi data baru
+    // validasi Todo baru
     const schema = Joi.object({
       title: Joi.string().min(3).required(),
       description: Joi.string().allow(""),
@@ -114,7 +154,17 @@ exports.updateTodo = async (todoId, req, res) => {
 
     // kirim response
     req.on("end", async () => {
-      const data = JSON.parse(body);
+      let data;
+
+      // gagal jika body bukan JSON
+      try {
+        data = JSON.parse(body);
+      } catch (err) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(
+          JSON.stringify({ status: false, message: "Invalid JSON" })
+        );
+      }
 
       // ✅ validasi input
       const { error, value } = schema.validate(data);
@@ -132,7 +182,7 @@ exports.updateTodo = async (todoId, req, res) => {
       await todo.update(value);
 
       // kirim response
-      res.writeHead(201, { "Content-Type": "application/json" });
+      res.writeHead(200, { "Content-Type": "application/json" });
       res.end(
         JSON.stringify({ status: true, message: "Update Todo Successfully." })
       );

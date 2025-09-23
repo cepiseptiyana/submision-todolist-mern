@@ -2,32 +2,42 @@ const todoController = require("../controllers/todoController");
 
 exports.handleTodoRoute = (req, res) => {
   const method = req.method;
-  const { pathname, searchParams } = new URL(
-    req.url,
-    `http://${req.headers.host}`
-  );
+  const { pathname } = new URL(req.url, `http://${req.headers.host}`);
 
   try {
-    if (method === "GET" && pathname === "/todos") {
+    // GET ALL
+    if (method === "GET" && pathname === "/api/todos") {
       todoController.getAllTodos(req, res);
       return true; // route sudah ke-handle
     }
 
-    if (method === "POST" && pathname === "/create-todo") {
+    // GET getTodoById TODO
+    if (method === "GET" && pathname.startsWith("/api/todos/")) {
+      const id = Number(pathname.split("/")[3]);
+
+      todoController.getTodoById(req, res, id);
+      return true; // route sudah ke-handle
+    }
+
+    // CREATE TOOD
+    if (method === "POST" && pathname === "/api/todos") {
       todoController.createTodo(req, res);
       return true;
     }
 
-    if (method === "DELETE" && pathname === "/delete-todo") {
-      const id = Number(searchParams.get("id"));
+    // DELETE TOOD
+    if (method === "DELETE" && pathname.startsWith("/api/todos/")) {
+      const id = Number(pathname.split("/")[3]);
 
       todoController.deleteTodo(id, res);
       return true;
     }
 
-    if (method === "PUT" && pathname.startsWith("/update-todo/")) {
-      const todoId = Number(pathname.split("/")[2]);
-      todoController.updateTodo(todoId, req, res);
+    // EDIT TODO
+    if (method === "PUT" && pathname.startsWith("/api/todos/")) {
+      const id = Number(pathname.split("/")[3]);
+
+      todoController.updateTodo(id, req, res);
       return true;
     }
 

@@ -40,7 +40,9 @@ Aplikasi ini adalah **TodoList App** yang dibangun dengan arsitektur **Frontend�
 
 - **Relasi**: `todos.category_id` (foreign key) → `categories.id`
 
-[🔼 Back to top](#todo-list-app)
+<div align="right">
+  <a href="#readme">⬆️ Back to top</a>
+</div>
 
 ## Step-by-Step Setup & Installation
 

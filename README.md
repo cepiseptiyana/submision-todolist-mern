@@ -102,30 +102,32 @@ Ini akan membuat folder berikut :
 
   Lalu masukkan kode berikut (sesuaikan value dengan database Anda) :
 
-  {
+```json
+{
   "development": {
-  "username": "postgres",
-  "password": "yourpassword",
-  "database": "todoList",
-  "host": "127.0.0.1",
-  "port": 5432,
-  "dialect": "postgres"
+    "username": "postgres",
+    "password": "yourpassword",
+    "database": "todoList",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres"
   },
   "test": {
-  "username": "root",
-  "password": null,
-  "database": "database_test",
-  "host": "127.0.0.1",
-  "dialect": "mysql"
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
   },
   "production": {
-  "username": "root",
-  "password": null,
-  "database": "database_production",
-  "host": "127.0.0.1",
-  "dialect": "mysql"
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
   }
-  }
+}
+```
 
 7. Buat database :
    Ini akan membuat database todoList sesuai konfigurasi development `backend/config/config.js`
@@ -142,10 +144,110 @@ a. Generate model + migration untuk table `categories`
 npx sequelize-cli model:generate --name Category --attributes name:string,color:string
 ```
 
+Saat pakai sequelize-cli model:generate, hasilnya berupa :
+
+```js
+"use strict";
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("Categories", {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      name: {
+        type: Sequelize.STRING,
+      },
+      color: {
+        type: Sequelize.STRING,
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+    });
+  },
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("Categories");
+  },
+};
+```
+
 b. Jalankan migration untuk membuat table `categories` di database
 
 ```bash
 npx sequelize-cli db:migrate
+```
+
+c. Generate model table "Todos"
+
+```bash
+npx sequelize-cli model:generate --name Todo --attributes title:string,description:text,completed:boolean,category_id:integer,priority:string,due_date:date
+```
+
+Saat pakai sequelize-cli model:generate, hasilnya berupa :
+
+- Migration file untuk tabel Todos yang otomatis tersimpan di:
+  backend/migrations/xxxxxx-create-todo.js.
+
+Isi migration kurang lebih seperti berikut: :
+
+```js
+"use strict";
+/\*_ @type {import('sequelize-cli').Migration} _/;
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("Todos", {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      title: {
+        type: Sequelize.STRING,
+      },
+      description: {
+        type: Sequelize.TEXT,
+      },
+      completed: {
+        type: Sequelize.BOOLEAN,
+      },
+      category_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Categories",
+          key: "id",
+        },
+        onDelete: "SET NULL",
+      },
+      priority: {
+        type: Sequelize.STRING,
+      },
+      due_date: {
+        type: Sequelize.DATE,
+      },
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+    });
+  },
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("Todos");
+  },
+};
 ```
 
 ### Setup Front End

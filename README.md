@@ -1,4 +1,4 @@
-# Project TodoList
+# Todo List App
 
 **TodoList App** adalah aplikasi full-stack untuk mengelola daftar tugas sehari-hari.
 
@@ -39,6 +39,8 @@ Aplikasi ini adalah **TodoList App** yang dibangun dengan arsitektur **Frontend�
 - **Pagination** pada daftar Todo dan Category untuk efisiensi data.
 
 - **Relasi**: `todos.category_id` (foreign key) → `categories.id`
+
+[🔼 Back to top](#todo-list-app)
 
 ## Step-by-Step Setup & Installation
 
@@ -143,3 +145,5 @@ b. Jalankan migration untuk membuat table `categories` di database
 ```bash
 npx sequelize-cli db:migrate
 ```
+
+### Setup Front End

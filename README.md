@@ -132,13 +132,13 @@ npx sequelize-cli db:create
 
 8. Creating the first Model (and Migration) :
 
-   a. Generate model + migration untuk table `categories`
+a. Generate model + migration untuk table `categories`
 
 ```bash
 npx sequelize-cli model:generate --name Category --attributes name:string,color:string
 ```
 
-    b. Jalankan migration untuk membuat table `categories` di database
+b. Jalankan migration untuk membuat table `categories` di database
 
 ```bash
 npx sequelize-cli db:migrate

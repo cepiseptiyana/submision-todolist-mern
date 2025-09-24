@@ -90,38 +90,38 @@ Ini akan membuat folder berikut :
 - migrations, contains all migration files
 - seeders, contains all seed files
 
-5. Configuration :
+6. Configuration :
 
-Masuk ke file berikut :
+   Masuk ke file berikut :
 
 - `backend/config/config.js`
 
-Lalu masukkan kode berikut (sesuaikan value dengan database Anda):
+  Lalu masukkan kode berikut (sesuaikan value dengan database Anda) :
 
-{
-"development": {
-"username": "postgres",
-"password": "yourpassword",
-"database": "todoList",
-"host": "127.0.0.1",
-"port": 5432,
-"dialect": "postgres"
-},
-"test": {
-"username": "root",
-"password": null,
-"database": "database_test",
-"host": "127.0.0.1",
-"dialect": "mysql"
-},
-"production": {
-"username": "root",
-"password": null,
-"database": "database_production",
-"host": "127.0.0.1",
-"dialect": "mysql"
-}
-}
+  {
+  "development": {
+  "username": "postgres",
+  "password": "yourpassword",
+  "database": "todoList",
+  "host": "127.0.0.1",
+  "port": 5432,
+  "dialect": "postgres"
+  },
+  "test": {
+  "username": "root",
+  "password": null,
+  "database": "database_test",
+  "host": "127.0.0.1",
+  "dialect": "mysql"
+  },
+  "production": {
+  "username": "root",
+  "password": null,
+  "database": "database_production",
+  "host": "127.0.0.1",
+  "dialect": "mysql"
+  }
+  }
 
 7. Buat database :
    Ini akan membuat database todoList sesuai konfigurasi development `backend/config/config.js`
@@ -130,15 +130,15 @@ Lalu masukkan kode berikut (sesuaikan value dengan database Anda):
 npx sequelize-cli db:create
 ```
 
-8. Creating the first Model (and Migration)
+8. Creating the first Model (and Migration) :
 
-#### a. Generate model + migration untuk table "categories"
+   a. Generate model + migration untuk table `categories`
 
 ```bash
 npx sequelize-cli model:generate --name Category --attributes name:string,color:string
 ```
 
-#### b. Jalankan migration untuk membuat tabel di database
+    b. Jalankan migration untuk membuat table `categories` di database
 
 ```bash
 npx sequelize-cli db:migrate

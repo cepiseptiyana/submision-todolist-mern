@@ -7,8 +7,7 @@ import { useNavigate } from "react-router";
 import { createCategory } from "./api/categoryApi";
 
 const CreateForm = (props) => {
-  const [successForm, setSuccessForm] = React.useState("");
-  const [errorInputForm, setErrorInputForm] = React.useState("");
+  const [messageResponse, setResponse] = React.useState(null);
   const { title } = props;
 
   const [form] = Form.useForm();
@@ -17,22 +16,16 @@ const CreateForm = (props) => {
 
   // handleCreateData
   const onFinish = async (values) => {
-    // values akan berisi:
-    // { title: '...', description: '...', category: '...', status: 1 atau 2 }
-
     try {
       const todoData = {
         ...values,
       };
 
-      // console.log(todoData);
       const response = await createCategory(todoData);
 
-      setSuccessForm(response.message);
-      setErrorInputForm("");
+      setResponse(response);
     } catch (err) {
-      setSuccessForm("");
-      setErrorInputForm(err.message);
+      setResponse(err);
     }
   };
 
@@ -54,10 +47,10 @@ const CreateForm = (props) => {
             <h1>{title}</h1>
           </div>
 
-          {successForm != "" ? (
+          {messageResponse != null ? (
             <Alert
-              message={successForm}
-              type="success"
+              message={messageResponse.message}
+              type={messageResponse.status ? "success" : "error"}
               style={{ marginBottom: 15 }}
             />
           ) : (
@@ -93,8 +86,6 @@ const CreateForm = (props) => {
             >
               <Input placeholder={"Enter Create Category"} />
             </Form.Item>
-
-            <p style={{ color: "red" }}>{errorInputForm}</p>
 
             <Form.Item
               label="Color"

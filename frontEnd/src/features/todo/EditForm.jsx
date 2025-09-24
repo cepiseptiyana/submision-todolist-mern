@@ -11,13 +11,11 @@ import {
 } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
-
 import dayjs from "dayjs";
 
 // API
 import { updateTodo, getById } from "./api/todoApi";
 
-const { useBreakpoint } = Grid;
 const { TextArea } = Input;
 
 const EditForm = (props) => {
@@ -25,6 +23,7 @@ const EditForm = (props) => {
   const [messageResponse, setResponse] = React.useState(null);
   const { title, params } = props;
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     if (params) {
@@ -58,14 +57,8 @@ const EditForm = (props) => {
     }
   }, [editTodo]);
 
-  const screens = useBreakpoint();
-  const navigate = useNavigate();
-
   // handleCreateData
   const onFinish = async (values) => {
-    // values akan berisi:
-    // { title: '...', description: '...', category: '...', status: 1 atau 2 }
-
     try {
       const todoData = {
         ...values,
@@ -74,7 +67,6 @@ const EditForm = (props) => {
           : null, // kalau tidak diisi
       };
 
-      // console.log(todoData);
       const response = await updateTodo(params, todoData);
 
       setResponse(response);

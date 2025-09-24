@@ -1,36 +1,20 @@
 import React from "react";
-import {
-  Button,
-  Form,
-  Input,
-  Radio,
-  Select,
-  Grid,
-  DatePicker,
-  Alert,
-} from "antd";
+import { Button, Form, Input, Radio, Select, DatePicker, Alert } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 
 // API
 import { createTodo } from "./api/todoApi";
 
-const { useBreakpoint } = Grid;
 const { TextArea } = Input;
 
 const CreateForm = (props) => {
   const { title } = props;
-  const [successForm, setSuccessForm] = React.useState("");
-  const [errorInputForm, setErrorInputForm] = React.useState("");
-
-  const screens = useBreakpoint();
+  const [messageResponse, setResponse] = React.useState(null);
   const navigate = useNavigate();
 
   // handleCreateData
   const onFinish = async (values) => {
-    // values akan berisi:
-    // { title: '...', description: '...', category: '...', status: 1 atau 2 }
-
     try {
       const todoData = {
         ...values,
@@ -39,14 +23,11 @@ const CreateForm = (props) => {
           : null, // kalau tidak diisi
       };
 
-      // console.log(todoData);
       const response = await createTodo(todoData);
 
-      setSuccessForm(response.message);
-      setErrorInputForm("");
+      setResponse(response.message);
     } catch (err) {
-      setSuccessForm("");
-      setErrorInputForm(err.message);
+      setResponse(err);
     }
   };
 
@@ -68,10 +49,10 @@ const CreateForm = (props) => {
             <h1>{title}</h1>
           </div>
 
-          {successForm != "" ? (
+          {messageResponse != null ? (
             <Alert
-              message={successForm}
-              type="success"
+              message={messageResponse.message}
+              type={messageResponse.status ? "success" : "error"}
               style={{ marginBottom: 15 }}
             />
           ) : (

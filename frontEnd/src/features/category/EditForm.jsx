@@ -57,7 +57,6 @@ const EditForm = (props) => {
 
       setResponse(response);
     } catch (err) {
-      console.log(err);
       setResponse(err);
     }
   };

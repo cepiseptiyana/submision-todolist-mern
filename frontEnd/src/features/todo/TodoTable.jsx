@@ -12,8 +12,6 @@ const TodoTable = (props) => {
   const { page, setPage, todos, total } = props;
   const navigate = useNavigate();
 
-  console.log(todos);
-
   // responsive
   const screens = useBreakpoint();
 

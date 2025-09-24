@@ -11,8 +11,14 @@ export const getTodo = async (page = 1, perPage = 10, search = "") => {
       headers: { "Content-Type": "application/json" },
     }
   );
-  if (!res.ok) throw new Error("Failed to Get todo");
-  return res.json();
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    // lempar error lengkap, termasuk message dari backend
+    throw { status: res.status, ...data };
+  }
+  return data;
 };
 
 // GET TODO getById
@@ -21,8 +27,14 @@ export const getById = async (params) => {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
-  if (!res.ok) throw new Error("Failed to Get todo");
-  return res.json();
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    // lempar error lengkap, termasuk message dari backend
+    throw { status: res.status, ...data };
+  }
+  return data;
 };
 
 // CREATE NEW TODO
@@ -32,8 +44,14 @@ export const createTodo = async (todoData) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(todoData),
   });
-  if (!res.ok) throw new Error("Failed to Create todo");
-  return res.json();
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    // lempar error lengkap, termasuk message dari backend
+    throw { status: res.status, ...data };
+  }
+  return data;
 };
 
 // DELETE TODO
@@ -42,8 +60,14 @@ export const deleteTodo = async (id) => {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
   });
-  if (!res.ok) throw new Error("Failed to Get todo");
-  return res.json();
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    // lempar error lengkap, termasuk message dari backend
+    throw { status: res.status, ...data };
+  }
+  return data;
 };
 
 // UPDATE TODO

@@ -1,29 +1,18 @@
 import React from "react";
-import {
-  Button,
-  Form,
-  Input,
-  Radio,
-  Select,
-  Grid,
-  DatePicker,
-  Alert,
-} from "antd";
+import { Button, Form, Input, ColorPicker, Alert } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 
 // API
-import { createTodo } from "./api/todoApi";
-
-const { useBreakpoint } = Grid;
-const { TextArea } = Input;
+import { createCategory } from "./api/categoryApi";
 
 const CreateForm = (props) => {
-  const { title } = props;
   const [successForm, setSuccessForm] = React.useState("");
   const [errorInputForm, setErrorInputForm] = React.useState("");
+  const { title } = props;
 
-  const screens = useBreakpoint();
+  const [form] = Form.useForm();
+
   const navigate = useNavigate();
 
   // handleCreateData
@@ -34,13 +23,10 @@ const CreateForm = (props) => {
     try {
       const todoData = {
         ...values,
-        due_date: values.due_date
-          ? values.due_date.format("YYYY-MM-DD HH:mm:ss")
-          : null, // kalau tidak diisi
       };
 
       // console.log(todoData);
-      const response = await createTodo(todoData);
+      const response = await createCategory(todoData);
 
       setSuccessForm(response.message);
       setErrorInputForm("");
@@ -91,72 +77,44 @@ const CreateForm = (props) => {
           </Button>
 
           <Form
-            name="create"
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 20 }}
+            form={form}
+            name="edit"
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 18 }}
             style={{ marginTop: 10 }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Form.Item
-              label="Title"
-              name="title"
+              label="Name Category"
+              name="name"
               rules={[{ required: true, message: "Please input your Title!" }]}
             >
-              <Input placeholder={"Enter Todo Title"} />
+              <Input placeholder={"Enter Create Category"} />
             </Form.Item>
+
+            <p style={{ color: "red" }}>{errorInputForm}</p>
 
             <Form.Item
-              label="Description"
-              name="description"
-              rules={[
-                { required: true, message: "Please input your description!" },
-              ]}
+              label="Color"
+              name="color"
+              rules={[{ required: true, message: "Please pick a color!" }]}
+              getValueProps={(value) => ({ value })}
+              valuePropName="value"
+              trigger="onChange"
             >
-              <TextArea placeholder={"Enter Todo Desc"} />
-            </Form.Item>
-
-            <Form.Item label="Priority" name="priority">
-              <Select
-                placeholder={"Select a Priority"}
-                options={[
-                  { value: "high", label: <span>High</span> },
-                  { value: "medium", label: <span>Medium</span> },
-                  { value: "low", label: <span>Low</span> },
-                ]}
+              <ColorPicker
+                onChange={(c) => {
+                  // ubah Color2 menjadi hex string sebelum dimasukkan ke form
+                  form.setFieldsValue({ color: c.toHexString() });
+                }}
               />
-            </Form.Item>
-
-            <Form.Item label="Category" name="category_id">
-              <Select
-                placeholder={"Select a Category"}
-                options={[
-                  { value: 1, label: <span>Work</span> },
-                  { value: 2, label: <span>Personal</span> },
-                  { value: 3, label: <span>Shopping</span> },
-                  { value: 4, label: <span>Belajar</span> },
-                  { value: 5, label: <span>bermain</span> },
-                ]}
-              />
-            </Form.Item>
-
-            <Form.Item name="completed" label="Completed">
-              <Radio.Group
-                options={[
-                  { value: true, label: "complete" },
-                  { value: false, label: "incomplete" },
-                ]}
-              />
-            </Form.Item>
-
-            <Form.Item name="due_date" label={null}>
-              <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
             </Form.Item>
 
             <Form.Item label={null}>
               <Button type="primary" htmlType="submit">
-                Create
+                Create Category
               </Button>
             </Form.Item>
           </Form>

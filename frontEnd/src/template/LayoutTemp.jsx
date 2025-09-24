@@ -11,12 +11,6 @@ const { Footer } = Layout;
 // mapping agar desktop & mobile bisa sinkron
 const keyMap = {
   list: { desktop: "ListDesktop", mobile: "ListMobile", path: "/" },
-  create: {
-    desktop: "CreateDesktop",
-    mobile: "CreateMobile",
-    path: "/create",
-  },
-  edit: { desktop: "EditDesktop", mobile: "EditMobile", path: "/edit" },
   manage: {
     desktop: "ManageDesktop",
     mobile: "ManageMobile",
@@ -46,17 +40,18 @@ const navigasiMobile = [
 
 const LayoutTemp = () => {
   // satu state global
-  const [currentPage, setCurrentPage] = React.useState("list");
+  const [currentPage, setCurrentPage] = React.useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const screens = useBreakpoint();
 
-  // cari currentPage dari path
+  // cari currentPage dari
   const getPageFromPath = (pathname) => {
     const found = Object.entries(keyMap).find(
       ([, { path }]) => path === pathname
     );
-    return found ? found[0] : "list"; // fallback ke list
+
+    return found ? found[0] : null; // path jika tidak ada,
   };
 
   React.useEffect(() => {
@@ -71,7 +66,7 @@ const LayoutTemp = () => {
 
     if (found) {
       const page = found[0];
-      setCurrentPage(found[0]); // "list" / "create" / "edit" / "manage"
+      setCurrentPage(found[0]); // "list" / "manage"
 
       // navigasi ke path React Router
       const path = keyMap[page].path;
@@ -84,14 +79,14 @@ const LayoutTemp = () => {
       {screens.md ? (
         <Menu
           onClick={handleClick}
-          selectedKeys={[keyMap[currentPage].desktop]} // sinkron ke desktop
+          selectedKeys={currentPage ? [keyMap[currentPage].desktop] : []} // sinkron ke desktop
           mode="horizontal"
           items={navigasiDekstop}
         />
       ) : (
         <Menu
           onClick={handleClick}
-          selectedKeys={[keyMap[currentPage].mobile]} // sinkron ke mobile
+          selectedKeys={currentPage ? [keyMap[currentPage].mobile] : []} // sinkron ke mobile
           defaultOpenKeys={["List"]}
           mode="inline"
           items={navigasiMobile}

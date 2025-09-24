@@ -9,7 +9,7 @@ import { deleteTodo } from "./api/todoApi";
 const { useBreakpoint } = Grid;
 
 const TodoTable = (props) => {
-  const { page, setPage, todos } = props;
+  const { page, setPage, todos, total } = props;
   const navigate = useNavigate();
 
   console.log(todos);
@@ -97,6 +97,7 @@ const TodoTable = (props) => {
       pagination={{
         current: page,
         pageSize: 10,
+        total: total,
         onChange: (p) => setPage(p),
       }}
     />

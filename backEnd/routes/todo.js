@@ -2,12 +2,19 @@ const todoController = require("../controllers/todoController");
 
 exports.handleTodoRoute = (req, res) => {
   const method = req.method;
-  const { pathname } = new URL(req.url, `http://${req.headers.host}`);
+  const { pathname, searchParams } = new URL(
+    req.url,
+    `http://${req.headers.host}`
+  );
 
   try {
     // GET ALL
     if (method === "GET" && pathname === "/api/todos") {
-      todoController.getAllTodos(req, res);
+      const page = Number(searchParams.get("page")) || 1;
+      const perPage = Number(searchParams.get("perPage")) || 10;
+      const search = searchParams.get("search") || "";
+
+      todoController.getAllTodos(req, res, { page, perPage, search });
       return true; // route sudah ke-handle
     }
 
@@ -33,7 +40,7 @@ exports.handleTodoRoute = (req, res) => {
       return true;
     }
 
-    // EDIT TODO
+    // UPDATE TODO
     if (method === "PUT" && pathname.startsWith("/api/todos/")) {
       const id = Number(pathname.split("/")[3]);
 

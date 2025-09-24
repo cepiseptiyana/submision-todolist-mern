@@ -13,7 +13,7 @@ const { Search } = Input;
 const Todo = () => {
   const [page, setPage] = React.useState(1);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const { todos, loading, error } = useTodos(page, 10, searchTerm);
+  const { todos, loading, error, total } = useTodos(page, 10, searchTerm);
   const navigate = useNavigate();
 
   return (
@@ -46,7 +46,7 @@ const Todo = () => {
           </Button>
         </div>
 
-        <TodoTable page={page} setPage={setPage} todos={todos} />
+        <TodoTable page={page} setPage={setPage} todos={todos} total={total} />
 
         {error && <p style={{ color: "red" }}>{error}</p>}
       </section>

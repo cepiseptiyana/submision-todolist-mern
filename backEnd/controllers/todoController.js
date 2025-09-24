@@ -1,15 +1,54 @@
+const { Op } = require("sequelize");
 const Joi = require("joi");
-
-const { Todo } = require("../models");
+const { Category, Todo } = require("../models");
 
 // GET TODO
-exports.getAllTodos = async (req, res) => {
+exports.getAllTodos = async (req, res, { page, perPage, search }) => {
   try {
-    const todos = await Todo.findAll();
-    res.writeHead(200, {
-      "Content-Type": "application/json",
+    const whereClause = search
+      ? {
+          title: {
+            [Op.iLike]: `%${search}%`, // case-insensitive LIKE
+          },
+        }
+      : {};
+
+    const { count, rows } = await Todo.findAndCountAll({
+      where: whereClause,
+      limit: perPage,
+      offset: (page - 1) * perPage,
+      include: [
+        {
+          model: Category,
+          as: "category",
+          attributes: ["id", "name", "color"],
+        },
+      ],
     });
-    res.end(JSON.stringify(todos));
+
+    const todosData = rows.map((todo) => ({
+      id: todo.id,
+      title: todo.title,
+      description: todo.description,
+      priority: todo.priority,
+      category: todo.category,
+      completed: todo.completed,
+      created_at: todo.createdAt,
+      updated_at: todo.updatedAt,
+    }));
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        data: todosData,
+        pagination: {
+          current_page: page,
+          per_page: perPage,
+          total: count,
+          total_pages: Math.ceil(count / perPage),
+        },
+      })
+    );
   } catch (err) {
     res.writeHead(500, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ status: false, message: err.message }));
@@ -19,7 +58,15 @@ exports.getAllTodos = async (req, res) => {
 // GET getTodoById
 exports.getTodoById = async (req, res, id) => {
   try {
-    const todo = await Todo.findByPk(Number(id));
+    const todo = await Todo.findByPk(Number(id), {
+      include: [
+        {
+          model: Category,
+          as: "category", // harus sama dengan alias di model
+          attributes: ["id", "name", "color"],
+        },
+      ],
+    });
 
     if (!todo) {
       res.writeHead(404, { "Content-Type": "application/json" });

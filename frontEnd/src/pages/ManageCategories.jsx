@@ -1,69 +1,66 @@
 import React from "react";
-import { Button, Form, Input, Grid } from "antd";
-import { SettingOutlined } from "@ant-design/icons";
+
+// ANT DESIGN
+import { Button, Input } from "antd";
+const { Search } = Input;
+
+// REACT ROUTER
 import { useNavigate } from "react-router";
 
-const { TextArea } = Input;
-const { useBreakpoint } = Grid;
+// FEATURES
+import TableCategory from "@/features/category/TableCategory";
 
-const onFinish = (values) => {
-  console.log("Success:", values);
-};
-const onFinishFailed = (errorInfo) => {
-  console.log("Failed:", errorInfo);
-};
+// HOOKS
+import { useCategories } from "@/features/category/hooks/useCategories";
 
 const ManageCategories = () => {
-  const screens = useBreakpoint();
+  const [page, setPage] = React.useState(1);
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const { categories, loading, error, total } = useCategories(
+    page,
+    10,
+    searchTerm
+  );
   const navigate = useNavigate();
 
   return (
     <>
-      <section style={{ paddingTop: 100, paddingLeft: 15, paddingRight: 15 }}>
-        <div style={{ maxWidth: 600, margin: "auto" }}>
-          <div>
-            <h1>Create New Category</h1>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "end",
-              paddingTop: 15,
-              paddingBottom: 15,
+      <section style={{ paddingTop: 100 }}>
+        <div
+          style={{
+            padding: 15,
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Search
+            placeholder="Search Category"
+            enterButton="Search"
+            style={{ width: 300 }}
+            loading={loading}
+            onSearch={(value) => {
+              setPage(1); // reset page saat search
+              setSearchTerm(value);
             }}
-          >
-            <Button type="primary" onClick={() => navigate("/manage-category")}>
-              <SettingOutlined />
-              Manage Categories
-            </Button>
-          </div>
+          />
 
-          <Form
-            name="basic"
-            labelCol={screens.sm ? { span: 5 } : { span: 0 }}
-            wrapperCol={screens.sm ? { span: 24 } : { span: 19 }}
-            style={{ maxWidth: 600, margin: "auto" }}
-            initialValues={{ remember: true }}
-            onFinish={onFinish}
-            onFinishFailed={onFinishFailed}
-            autoComplete="off"
+          <Button
+            type="primary"
+            style={{ backgroundColor: "#52c41a" }}
+            onClick={() => navigate("/manage-category/create")}
           >
-            <Form.Item
-              label="Create Category"
-              name="title"
-              rules={[{ required: true, message: "Please input your Title!" }]}
-            >
-              <Input placeholder="Enter Todo Title" />
-            </Form.Item>
-
-            <Form.Item label={null}>
-              <Button type="primary" htmlType="submit">
-                Create Category
-              </Button>
-            </Form.Item>
-          </Form>
+            Create Category
+          </Button>
         </div>
+
+        <TableCategory
+          page={page}
+          setPage={setPage}
+          categories={categories}
+          total={total}
+        />
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
       </section>
     </>
   );

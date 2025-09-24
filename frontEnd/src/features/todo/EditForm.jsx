@@ -22,8 +22,7 @@ const { TextArea } = Input;
 
 const EditForm = (props) => {
   const [editTodo, setEditTodo] = React.useState(null);
-  const [successForm, setSuccessForm] = React.useState("");
-  const [errorInputForm, setErrorInputForm] = React.useState("");
+  const [messageResponse, setResponse] = React.useState(null);
   const { title, params } = props;
   const [form] = Form.useForm();
 
@@ -40,7 +39,6 @@ const EditForm = (props) => {
               : null,
           };
 
-          console.log(response);
           setEditTodo(data);
         } catch (err) {
           console.log(err.message);
@@ -78,13 +76,10 @@ const EditForm = (props) => {
 
       // console.log(todoData);
       const response = await updateTodo(params, todoData);
-      console.log("Response dari backend:", response);
 
-      setSuccessForm(response.message);
-      setErrorInputForm("");
+      setResponse(response);
     } catch (err) {
-      setSuccessForm("");
-      setErrorInputForm(err.message);
+      setResponse(err);
     }
   };
 
@@ -106,10 +101,10 @@ const EditForm = (props) => {
             <h1>{title}</h1>
           </div>
 
-          {successForm != "" ? (
+          {messageResponse != null ? (
             <Alert
-              message={successForm}
-              type="success"
+              message={messageResponse.message}
+              type={messageResponse.status ? "success" : "error"}
               style={{ marginBottom: 15 }}
             />
           ) : (
@@ -125,14 +120,13 @@ const EditForm = (props) => {
             }}
             onClick={() => navigate("/manage-category")}
           >
-            <SettingOutlined />
-            Manage Categories
+            <SettingOutlined /> Manage Categories
           </Button>
           <Form
             form={form}
             name="edit"
-            labelCol={screens.sm ? { span: 4 } : { span: 0 }}
-            wrapperCol={screens.sm ? { span: 24 } : { span: 20 }}
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 20 }}
             style={{ marginTop: 10 }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
@@ -149,8 +143,6 @@ const EditForm = (props) => {
                 }
               />
             </Form.Item>
-
-            <p style={{ color: "red" }}>{errorInputForm}</p>
 
             <Form.Item
               label="Description"

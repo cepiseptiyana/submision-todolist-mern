@@ -12,9 +12,18 @@ exports.handleCategoryRoute = (req, res) => {
     if (method === "GET" && pathname === "/api/categories") {
       const page = Number(searchParams.get("page")) || 1;
       const perPage = Number(searchParams.get("perPage")) || 10;
+      const search = searchParams.get("search") || "";
 
-      categoryController.getAllCategories(req, res, { page, perPage });
+      categoryController.getAllCategories(req, res, { page, perPage, search });
       return true;
+    }
+
+    // GET getTodoById CATEGORIES
+    if (method === "GET" && pathname.startsWith("/api/categories/")) {
+      const id = Number(pathname.split("/")[3]);
+
+      categoryController.getCategoryById(req, res, id);
+      return true; // route sudah ke-handle
     }
 
     // CREATE
@@ -31,7 +40,7 @@ exports.handleCategoryRoute = (req, res) => {
       return true;
     }
 
-    // EDIT TODO
+    // UPDATE TODO
     if (method === "PUT" && pathname.startsWith("/api/categories/")) {
       const id = Number(pathname.split("/")[3]);
 

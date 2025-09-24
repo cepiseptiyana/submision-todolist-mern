@@ -1,7 +1,7 @@
-const API_BASE = "http://127.0.0.1:3000/api/todos";
+const API_BASE = "http://127.0.0.1:3000/api/categories";
 
 // GET TODO
-export const getTodo = async (page = 1, perPage = 10, search = "") => {
+export const getCategory = async (page = 1, perPage = 10, search = "") => {
   const res = await fetch(
     `${API_BASE}?page=${page}&perPage=${perPage}&search=${encodeURIComponent(
       search
@@ -26,7 +26,7 @@ export const getById = async (params) => {
 };
 
 // CREATE NEW TODO
-export const createTodo = async (todoData) => {
+export const createCategory = async (todoData) => {
   const res = await fetch(API_BASE, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -37,21 +37,27 @@ export const createTodo = async (todoData) => {
 };
 
 // DELETE TODO
-export const deleteTodo = async (id) => {
+export const deleteCategory = async (id) => {
   const res = await fetch(`${API_BASE}/${id}`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
   });
-  if (!res.ok) throw new Error("Failed to Get todo");
-  return res.json();
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    // lempar error lengkap, termasuk message dari backend
+    throw { status: res.status, ...data };
+  }
+  return data;
 };
 
 // UPDATE TODO
-export const updateTodo = async (id, todoData) => {
+export const updateCategory = async (id, dataCategory) => {
   const res = await fetch(`${API_BASE}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(todoData),
+    body: JSON.stringify(dataCategory),
   });
 
   const data = await res.json();

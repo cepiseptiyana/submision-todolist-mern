@@ -1,29 +1,30 @@
+const { Op } = require("sequelize");
 const Joi = require("joi");
 const { Category, Todo } = require("../models");
 
 // GET TODO
-exports.getAllCategories = async (req, res, { page, perPage }) => {
+exports.getAllCategories = async (req, res, { page, perPage, search }) => {
   try {
-    const { count, rows } = await Todo.findAndCountAll({
+    const whereClause = search
+      ? {
+          name: {
+            [Op.iLike]: `%${search}%`, // case-insensitive LIKE
+          },
+        }
+      : {};
+
+    const { count, rows } = await Category.findAndCountAll({
+      where: whereClause,
       limit: perPage,
       offset: (page - 1) * perPage,
-      include: [
-        {
-          model: Category,
-          as: "category",
-          attributes: ["id", "name", "color"],
-        },
-      ],
     });
 
-    const todosData = rows.map((todo) => ({
-      id: todo.id,
-      title: todo.title,
-      description: todo.description,
-      completed: todo.completed,
-      category: todo.category,
-      created_at: todo.createdAt,
-      updated_at: todo.updatedAt,
+    const todosData = rows.map((category) => ({
+      id: category.id,
+      name: category.name,
+      color: category.color,
+      created_at: category.createdAt,
+      updated_at: category.updatedAt,
     }));
 
     res.writeHead(200, { "Content-Type": "application/json" });
@@ -44,6 +45,34 @@ exports.getAllCategories = async (req, res, { page, perPage }) => {
   }
 };
 
+// GET getCategoryById
+exports.getCategoryById = async (req, res, id) => {
+  try {
+    const category = await Category.findByPk(Number(id));
+
+    if (!category) {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          status: false,
+          data: null,
+          message: "Category not found",
+        })
+      );
+      return;
+    }
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ status: true, data: category, message: null }));
+  } catch (error) {
+    res.writeHead(500, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({ status: false, data: null, message: error.message })
+    );
+  }
+};
+
+// CREATE
 exports.createCategory = async (req, res) => {
   try {
     const schema = Joi.object({
@@ -102,6 +131,7 @@ exports.createCategory = async (req, res) => {
   }
 };
 
+// DELETE
 exports.deleteCategory = async (id, res) => {
   try {
     const category = await Category.findByPk(Number(id));
@@ -130,6 +160,7 @@ exports.deleteCategory = async (id, res) => {
   }
 };
 
+// UPDATE
 exports.updateCategory = async (id, req, res) => {
   try {
     let body = "";

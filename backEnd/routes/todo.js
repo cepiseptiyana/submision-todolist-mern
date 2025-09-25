@@ -1,40 +1,60 @@
 const todoController = require("../controllers/todoController");
+const express = require("express");
 
-exports.handleTodoRoute = (req, res) => {
-  const method = req.method;
-  const { pathname, searchParams } = new URL(
-    req.url,
-    `http://${req.headers.host}`
-  );
+const router = express.Router();
 
+// GET ALL TODOS
+router.get("/", (req, res, next) => {
   try {
-    if (method === "GET" && pathname === "/todos") {
-      todoController.getAllTodos(req, res);
-      return true; // route sudah ke-handle
-    }
+    const page = Number(req.query.page) || 1;
+    const perPage = Number(req.query.perPage) || 10;
+    const search = req.query.search || "";
 
-    if (method === "POST" && pathname === "/create-todo") {
-      todoController.createTodo(req, res);
-      return true;
-    }
-
-    if (method === "DELETE" && pathname === "/delete-todo") {
-      const id = Number(searchParams.get("id"));
-
-      todoController.deleteTodo(id, res);
-      return true;
-    }
-
-    if (method === "PUT" && pathname.startsWith("/update-todo/")) {
-      const todoId = Number(pathname.split("/")[2]);
-      todoController.updateTodo(todoId, req, res);
-      return true;
-    }
-
-    return false; // server 404
+    todoController.getAllTodos(req, res, { page, perPage, search });
   } catch (err) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: false, message: err.message }));
-    return true; // tetap dianggap handled
+    // skip semua middleware normal
+    next(err);
   }
-};
+});
+
+// GET BY ID
+router.get("/:id", (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    todoController.getTodoById(req, res, id);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// CREATE TOOD
+router.post("/", (req, res, next) => {
+  try {
+    todoController.createTodo(req, res);
+  } catch (err) {
+    // skip semua middleware normal
+    next(err);
+  }
+});
+
+// DELETE TOOD
+router.delete("/:id", (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    todoController.deleteTodo(id, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// UPDATE TODO
+router.put("/:id", (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    todoController.updateTodo(id, req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+module.exports = router;

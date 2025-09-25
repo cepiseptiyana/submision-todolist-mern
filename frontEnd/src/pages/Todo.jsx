@@ -1,31 +1,24 @@
 import React from "react";
-
-// ANT DESIGN
 import { Button, Input } from "antd";
-const { Search } = Input;
-
-// REACT ROUTER
 import { useNavigate } from "react-router";
 
-// FEATURES
-import TableCategory from "@/features/category/components/TableCategory";
+// Features
+import TodoTable from "@/features/todo/components/TodoTable";
 
 // HOOKS
-import { useCategoriesPagination } from "@/hooks/useCategoriesPagination";
+import { useTodos } from "@/hooks/useTodos";
 
-const ManageCategories = () => {
+const { Search } = Input;
+
+const Todo = () => {
   const [page, setPage] = React.useState(1);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const { categories, loading, error, total } = useCategoriesPagination(
-    page,
-    10,
-    searchTerm
-  );
+  const { todos, loading, error, total } = useTodos(page, 10, searchTerm);
   const navigate = useNavigate();
 
   return (
     <>
-      <section style={{ paddingTop: 100 }}>
+      <section style={{ paddingTop: 100, paddingLeft: 15, paddingRight: 15 }}>
         <div
           style={{
             padding: 15,
@@ -34,7 +27,7 @@ const ManageCategories = () => {
           }}
         >
           <Search
-            placeholder="Search Category"
+            placeholder="Search Title"
             enterButton="Search"
             style={{ width: 300 }}
             loading={loading}
@@ -47,18 +40,13 @@ const ManageCategories = () => {
           <Button
             type="primary"
             style={{ backgroundColor: "#52c41a" }}
-            onClick={() => navigate("/manage-category/create")}
+            onClick={() => navigate("/create")}
           >
-            Create Category
+            Create Todo
           </Button>
         </div>
 
-        <TableCategory
-          page={page}
-          setPage={setPage}
-          categories={categories}
-          total={total}
-        />
+        <TodoTable page={page} setPage={setPage} todos={todos} total={total} />
 
         {error && <p style={{ color: "red" }}>{error}</p>}
       </section>
@@ -66,4 +54,4 @@ const ManageCategories = () => {
   );
 };
 
-export default ManageCategories;
+export default Todo;

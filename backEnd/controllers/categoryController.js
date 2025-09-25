@@ -1,9 +1,13 @@
 const { Op } = require("sequelize");
 const Joi = require("joi");
-const { Category, Todo } = require("../models");
+const { Category } = require("../models");
 
-// GET TODO
-exports.getAllCategories = async (req, res, { page, perPage, search }) => {
+// GET CATEGORIES
+module.exports.getAllCategories = async (
+  req,
+  res,
+  { page, perPage, search }
+) => {
   try {
     const whereClause = search
       ? {
@@ -19,61 +23,59 @@ exports.getAllCategories = async (req, res, { page, perPage, search }) => {
       offset: (page - 1) * perPage,
     });
 
-    const todosData = rows.map((category) => ({
-      id: category.id,
-      name: category.name,
-      color: category.color,
-      created_at: category.createdAt,
-      updated_at: category.updatedAt,
-    }));
-
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        data: todosData,
+    // Jika tidak ada data
+    if (rows.length === 0) {
+      return res.status(200).json({
+        status: false,
+        message: "No Categories found",
+        data: [],
         pagination: {
           current_page: page,
           per_page: perPage,
           total: count,
           total_pages: Math.ceil(count / perPage),
         },
-      })
-    );
-  } catch (err) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: false, message: err.message }));
-  }
-};
-
-// GET getCategoryById
-exports.getCategoryById = async (req, res, id) => {
-  try {
-    const category = await Category.findByPk(Number(id));
-
-    if (!category) {
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({
-          status: false,
-          data: null,
-          message: "Category not found",
-        })
-      );
-      return;
+      });
     }
 
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: true, data: category, message: null }));
-  } catch (error) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({ status: false, data: null, message: error.message })
-    );
+    // KIRIM RESPONSE
+    res.status(200).json({
+      status: true,
+      data: rows,
+      pagination: {
+        current_page: page,
+        per_page: perPage,
+        total: count,
+        total_pages: Math.ceil(count / perPage),
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
 
-// CREATE
-exports.createCategory = async (req, res) => {
+// GET BY ID
+module.exports.getTodoById = async (req, res, id) => {
+  try {
+    const category = await Category.findByPk(id);
+
+    if (!category) {
+      return res
+        .status(500)
+        .json({ status: false, data: null, message: "Category not found" });
+    }
+
+    res.status(200).json({ status: true, data: category, message: null });
+  } catch (err) {
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+// CREATE CATEGORY
+module.exports.createCategory = async (req, res) => {
+  const body = req.body;
+
   try {
     const schema = Joi.object({
       name: Joi.string().min(3).required(),
@@ -82,100 +84,68 @@ exports.createCategory = async (req, res) => {
         .allow(""),
     });
 
-    // Kumpulin body request
-    let body = "";
-    req.on("data", (chunk) => {
-      body += chunk;
-    });
+    const { error, value } = schema.validate(body);
+    if (error) {
+      return res
+        .status(400)
+        .json({ status: false, message: error.details[0].message });
+    }
 
-    // kalau semua data sudah masuk
-    req.on("end", async () => {
-      let data;
+    // CREATE data
+    const category = await Category.create(value);
 
-      try {
-        data = JSON.parse(body); // bisa gagal jika body bukan JSON
-      } catch (err) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        return res.end(
-          JSON.stringify({ status: false, message: "Invalid JSON" })
-        );
-      }
-
-      // ✅ validasi input
-      const { error, value } = schema.validate(data);
-      if (error) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        return res.end(
-          JSON.stringify({
-            status: false,
-            message: error.details[0].message,
-          })
-        );
-      }
-
-      // CREATE data
-      await Category.create(value);
-
-      // kirim response
-      res.writeHead(201, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({
-          status: true,
-          message: "Create Category Successfully.",
-        })
-      );
+    res.status(201).json({
+      status: true,
+      message: "Create Category Successfully.",
+      data: category,
     });
   } catch (err) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: false, message: err.message }));
+    console.error(err);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
 
-// DELETE
-exports.deleteCategory = async (id, res) => {
+// DELETE CATEGORY
+module.exports.deleteCategory = async (id, res) => {
   try {
-    const category = await Category.findByPk(Number(id));
+    const category = await Category.findByPk(id);
 
     if (!category) {
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({ status: false, message: "Category not found." })
-      );
-      return;
+      // Todo tidak ditemukan
+      return res.status(404).json({
+        status: false,
+        message: "Category not found",
+        data: null,
+      });
     }
 
-    // DELETE
-    await category.destroy();
+    const deleteCategory = await category.destroy();
 
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        status: true,
-        message: "Category deleted successfully.",
-      })
-    );
+    res.status(201).json({
+      status: true,
+      message: "Category deleted successfully.",
+      data: deleteCategory,
+    });
   } catch (err) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: false, message: "Server error." }));
+    console.error(err);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
 
-// UPDATE
-exports.updateCategory = async (id, req, res) => {
+// UPDATE CATEGORY
+module.exports.updateCategory = async (id, req, res) => {
+  const body = req.body;
+
   try {
-    let body = "";
+    const category = await Category.findByPk(id);
 
-    // cari category
-    const category = await Category.findByPk(Number(id));
-
-    // todo tidak ada
     if (!category) {
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ status: false, message: "Category not found" }));
-      return;
+      res
+        .status(500)
+        .json({ status: false, data: null, message: "Category not found" });
     }
 
-    // validasi Category baru
+    // validasi Todo baru
     const schema = Joi.object({
       name: Joi.string().min(3).required(),
       color: Joi.string()
@@ -183,51 +153,23 @@ exports.updateCategory = async (id, req, res) => {
         .allow(""),
     });
 
-    // get data req
-    req.on("data", (chunk) => {
-      body += chunk;
-    });
+    const { error, value } = schema.validate(body);
 
-    // kirim response
-    req.on("end", async () => {
-      let data;
+    if (error) {
+      return res
+        .status(400)
+        .json({ status: false, message: error.details[0].message });
+    }
 
-      // gagal jika body bukan JSON
-      try {
-        data = JSON.parse(body);
-      } catch (err) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        return res.end(
-          JSON.stringify({ status: false, message: "Invalid JSON" })
-        );
-      }
+    // UPDATE data
+    const update = await category.update(value);
 
-      // ✅ validasi input
-      const { error, value } = schema.validate(data);
-      if (error) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        return res.end(
-          JSON.stringify({
-            status: false,
-            message: error.details[0].message,
-          })
-        );
-      }
-
-      // UPDATE data
-      await category.update(value);
-
-      // kirim response
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({
-          status: true,
-          message: "Update Category Successfully.",
-        })
-      );
+    return res.status(200).json({
+      status: true,
+      message: "Update Category Successfully.",
+      data: update,
     });
   } catch (err) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: false, message: err.message }));
+    return res.status(500).json({ status: false, message: err.message });
   }
 };

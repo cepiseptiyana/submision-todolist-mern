@@ -3,7 +3,7 @@ const Joi = require("joi");
 const { Category, Todo } = require("../models");
 
 // GET TODO
-exports.getAllTodos = async (req, res, { page, perPage, search }) => {
+module.exports.getAllTodos = async (req, res, { page, perPage, search }) => {
   try {
     const whereClause = search
       ? {
@@ -26,39 +26,42 @@ exports.getAllTodos = async (req, res, { page, perPage, search }) => {
       ],
     });
 
-    const todosData = rows.map((todo) => ({
-      id: todo.id,
-      title: todo.title,
-      description: todo.description,
-      priority: todo.priority,
-      category: todo.category,
-      completed: todo.completed,
-      created_at: todo.createdAt,
-      updated_at: todo.updatedAt,
-    }));
-
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({
-        data: todosData,
+    // Jika tidak ada data
+    if (rows.length === 0) {
+      return res.status(200).json({
+        status: false,
+        message: "No todos found",
+        data: [],
         pagination: {
           current_page: page,
           per_page: perPage,
           total: count,
           total_pages: Math.ceil(count / perPage),
         },
-      })
-    );
+      });
+    }
+
+    // KIRIM RESPONSE
+    res.status(200).json({
+      status: true,
+      data: rows,
+      pagination: {
+        current_page: page,
+        per_page: perPage,
+        total: count,
+        total_pages: Math.ceil(count / perPage),
+      },
+    });
   } catch (err) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: false, message: err.message }));
+    console.error(err);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
 
-// GET getTodoById
-exports.getTodoById = async (req, res, id) => {
+// GET BY ID
+module.exports.getTodoById = async (req, res, id) => {
   try {
-    const todo = await Todo.findByPk(Number(id), {
+    const todo = await Todo.findByPk(id, {
       include: [
         {
           model: Category,
@@ -69,25 +72,21 @@ exports.getTodoById = async (req, res, id) => {
     });
 
     if (!todo) {
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({ status: false, data: null, message: "Todo not found" })
-      );
-      return;
+      return res
+        .status(500)
+        .json({ status: false, data: null, message: "Todo not found" });
     }
 
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: true, data: todo, message: null }));
-  } catch (error) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({ status: false, data: null, message: error.message })
-    );
+    res.status(200).json({ status: true, data: todo, message: null });
+  } catch (err) {
+    res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
 
-// CREATE
-exports.createTodo = async (req, res) => {
+// CREATE TODO
+module.exports.createTodo = async (req, res) => {
+  const body = req.body;
+
   try {
     const schema = Joi.object({
       title: Joi.string().min(3).required(),
@@ -98,90 +97,63 @@ exports.createTodo = async (req, res) => {
       due_date: Joi.date().optional(),
     });
 
-    // Kumpulin body request
-    let body = "";
-    req.on("data", (chunk) => {
-      body += chunk;
-    });
-
-    // kalau semua data sudah masuk
-    req.on("end", async () => {
-      let data;
-
-      // gagal jika body bukan JSON
-      try {
-        data = JSON.parse(body); // bisa gagal jika body bukan JSON
-      } catch (err) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        return res.end(
-          JSON.stringify({ status: false, message: "Invalid JSON" })
-        );
-      }
-
-      // ✅ validasi input
-      const { error, value } = schema.validate(data);
-      if (error) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        return res.end(
-          JSON.stringify({
-            status: false,
-            message: error.details[0].message,
-          })
-        );
-      }
-
-      // CREATE data
-      await Todo.create(value);
-
-      // kirim response
-      res.writeHead(201, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({ status: true, message: "Create Todo Successfully." })
-      );
-    });
-  } catch (err) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: false, message: err.message }));
-  }
-};
-
-// DELETE
-exports.deleteTodo = async (id, res) => {
-  try {
-    const todo = await Todo.findByPk(Number(id));
-
-    if (!todo) {
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ status: false, message: "Todo not found." }));
-      return;
+    // Validasi body request
+    const { error, value } = schema.validate(body);
+    if (error) {
+      return res
+        .status(400)
+        .json({ status: false, message: error.details[0].message });
     }
 
-    // DELETE
-    await todo.destroy();
+    // CREATE data
+    const todo = await Todo.create(value);
 
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(
-      JSON.stringify({ status: true, message: "Todo deleted successfully." })
-    );
+    res
+      .status(201)
+      .json({ status: true, message: "Create Todo Successfully.", data: todo });
   } catch (err) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: false, message: "Server error." }));
+    console.error(err);
+    res.status(500).json({ status: false, message: "Internal Server Error" });
   }
 };
 
-// UPDATE
-exports.updateTodo = async (id, req, res) => {
+// DELETE TODO
+module.exports.deleteTodo = async (id, res) => {
   try {
-    let body = "";
+    const todo = await Todo.findByPk(id);
 
-    // cari todo
-    const todo = await Todo.findByPk(Number(id));
-
-    // todo tidak ada
     if (!todo) {
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ status: false, message: "Todo not found" }));
-      return;
+      // Todo tidak ditemukan
+      return res.status(404).json({
+        status: false,
+        message: "Todo not found",
+        data: null,
+      });
+    }
+
+    const todoDelete = await todo.destroy();
+
+    res.status(201).json({
+      status: true,
+      message: "Todo deleted successfully.",
+      data: todoDelete,
+    });
+  } catch (err) {
+    res.status(500).json({ status: false, message: err.message });
+  }
+};
+
+// UPDATE TODO
+module.exports.updateTodo = async (id, req, res) => {
+  const body = req.body;
+
+  try {
+    const todo = await Todo.findByPk(id);
+
+    if (!todo) {
+      res
+        .status(500)
+        .json({ status: false, data: null, message: "Todo not found" });
     }
 
     // validasi Todo baru
@@ -194,48 +166,23 @@ exports.updateTodo = async (id, req, res) => {
       due_date: Joi.date().optional(),
     });
 
-    // get data req
-    req.on("data", (chunk) => {
-      body += chunk;
-    });
+    const { error, value } = schema.validate(body);
 
-    // kirim response
-    req.on("end", async () => {
-      let data;
+    if (error) {
+      return res
+        .status(400)
+        .json({ status: false, message: error.details[0].message });
+    }
 
-      // gagal jika body bukan JSON
-      try {
-        data = JSON.parse(body);
-      } catch (err) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        return res.end(
-          JSON.stringify({ status: false, message: "Invalid JSON" })
-        );
-      }
+    // UPDATE data
+    const update = await todo.update(value);
 
-      // ✅ validasi input
-      const { error, value } = schema.validate(data);
-      if (error) {
-        res.writeHead(400, { "Content-Type": "application/json" });
-        return res.end(
-          JSON.stringify({
-            status: false,
-            message: error.details[0].message,
-          })
-        );
-      }
-
-      // UPDATE data
-      await todo.update(value);
-
-      // kirim response
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(
-        JSON.stringify({ status: true, message: "Update Todo Successfully." })
-      );
+    return res.status(200).json({
+      status: true,
+      message: "Update Todo Successfully.",
+      data: update,
     });
   } catch (err) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: false, message: err.message }));
+    return res.status(500).json({ status: false, message: err.message });
   }
 };

@@ -1,35 +1,32 @@
-const { createServer } = require("node:http");
-
-// rotues
-const { handleTodoRoute } = require("./routes/todo");
-const { handleCategoryRoute } = require("./routes/category");
+const express = require("express");
+const cors = require("cors");
 
 const hostname = "127.0.0.1";
 const port = 3000;
 
-const server = createServer((req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // allow semua origin
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+// Middleware
+const handleTodoRoute = require("./routes/todo");
+const handleCategoryRoute = require("./routes/category");
 
-  // Handle preflight request
-  if (req.method === "OPTIONS") {
-    res.writeHead(204); // No Content
-    res.end();
-    return;
-  }
+const app = express();
 
-  if (handleTodoRoute(req, res)) return;
-  if (handleCategoryRoute(req, res)) return;
+app.use(cors());
+app.use(express.json());
+app.use("/api/todos", handleTodoRoute);
+app.use("/api/categories", handleCategoryRoute);
 
-  // Kalau tidak ada route yang cocok → 404
-  res.writeHead(404, { "Content-Type": "text/plain" });
-  res.end("Page not found");
+// 404 middleware → kalau route tidak ada
+// midddleware normal
+app.use((req, res) => {
+  res.status(404).json({ status: false, message: "Route not found" });
 });
 
-server.listen(port, hostname, () => {
+// Error middleware → kalau controller lempar error
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(400).json({ status: false, message: err.message });
+});
+
+app.listen(port, hostname, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });

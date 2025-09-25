@@ -1,57 +1,60 @@
 const todoController = require("../controllers/todoController");
+const express = require("express");
 
-exports.handleTodoRoute = (req, res) => {
-  const method = req.method;
-  const { pathname, searchParams } = new URL(
-    req.url,
-    `http://${req.headers.host}`
-  );
+const router = express.Router();
 
+// GET ALL TODOS
+router.get("/", (req, res, next) => {
   try {
-    // GET ALL
-    if (method === "GET" && pathname === "/api/todos") {
-      const page = Number(searchParams.get("page")) || 1;
-      const perPage = Number(searchParams.get("perPage")) || 10;
-      const search = searchParams.get("search") || "";
+    const page = Number(req.query.page) || 1;
+    const perPage = Number(req.query.perPage) || 10;
+    const search = req.query.search || "";
 
-      todoController.getAllTodos(req, res, { page, perPage, search });
-      return true; // route sudah ke-handle
-    }
-
-    // GET getTodoById TODO
-    if (method === "GET" && pathname.startsWith("/api/todos/")) {
-      const id = Number(pathname.split("/")[3]);
-
-      todoController.getTodoById(req, res, id);
-      return true; // route sudah ke-handle
-    }
-
-    // CREATE TOOD
-    if (method === "POST" && pathname === "/api/todos") {
-      todoController.createTodo(req, res);
-      return true;
-    }
-
-    // DELETE TOOD
-    if (method === "DELETE" && pathname.startsWith("/api/todos/")) {
-      const id = Number(pathname.split("/")[3]);
-
-      todoController.deleteTodo(id, res);
-      return true;
-    }
-
-    // UPDATE TODO
-    if (method === "PUT" && pathname.startsWith("/api/todos/")) {
-      const id = Number(pathname.split("/")[3]);
-
-      todoController.updateTodo(id, req, res);
-      return true;
-    }
-
-    return false; // server 404
+    todoController.getAllTodos(req, res, { page, perPage, search });
   } catch (err) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: false, message: err.message }));
-    return true; // tetap dianggap handled
+    // skip semua middleware normal
+    next(err);
   }
-};
+});
+
+// GET BY ID
+router.get("/:id", (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    todoController.getTodoById(req, res, id);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// CREATE TOOD
+router.post("/", (req, res, next) => {
+  try {
+    todoController.createTodo(req, res);
+  } catch (err) {
+    // skip semua middleware normal
+    next(err);
+  }
+});
+
+// DELETE TOOD
+router.delete("/:id", (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    todoController.deleteTodo(id, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// UPDATE TODO
+router.put("/:id", (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    todoController.updateTodo(id, req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+module.exports = router;

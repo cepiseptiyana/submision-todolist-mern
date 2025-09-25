@@ -1,57 +1,61 @@
 const categoryController = require("../controllers/categoryController");
+const express = require("express");
 
-exports.handleCategoryRoute = (req, res) => {
-  const method = req.method;
-  const { pathname, searchParams } = new URL(
-    req.url,
-    `http://${req.headers.host}`
-  );
+const router = express.Router();
 
+// GET ALL CATEGORIES
+router.get("/", (req, res, next) => {
   try {
-    // GET ALL CATEGORIES & PAGINATION
-    if (method === "GET" && pathname === "/api/categories") {
-      const page = Number(searchParams.get("page")) || 1;
-      const perPage = Number(searchParams.get("perPage")) || 10;
-      const search = searchParams.get("search") || "";
+    const page = Number(req.query.page) || 1;
+    const perPage = Number(req.query.perPage) || 10;
+    const search = req.query.search || "";
 
-      categoryController.getAllCategories(req, res, { page, perPage, search });
-      return true;
-    }
-
-    // GET getTodoById CATEGORIES
-    if (method === "GET" && pathname.startsWith("/api/categories/")) {
-      const id = Number(pathname.split("/")[3]);
-
-      categoryController.getCategoryById(req, res, id);
-      return true; // route sudah ke-handle
-    }
-
-    // CREATE
-    if (method === "POST" && pathname === "/api/categories") {
-      categoryController.createCategory(req, res);
-      return true;
-    }
-
-    // DELETE
-    if (method === "DELETE" && pathname.startsWith("/api/categories/")) {
-      const id = Number(pathname.split("/")[3]);
-
-      categoryController.deleteCategory(id, res);
-      return true;
-    }
-
-    // UPDATE TODO
-    if (method === "PUT" && pathname.startsWith("/api/categories/")) {
-      const id = Number(pathname.split("/")[3]);
-
-      categoryController.updateCategory(id, req, res);
-      return true;
-    }
-
-    return false; // server 404
+    categoryController.getAllCategories(req, res, { page, perPage, search });
   } catch (err) {
-    res.writeHead(500, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ status: false, message: err.message }));
-    return true; // tetap dianggap handled
+    // skip semua middleware normal
+    // ke middleware error
+    next(err);
   }
-};
+});
+
+// GET BY ID
+router.get("/:id", (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    categoryController.getTodoById(req, res, id);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// CREATE CATEGORY
+router.post("/", (req, res, next) => {
+  try {
+    categoryController.createCategory(req, res);
+  } catch (err) {
+    // skip semua middleware normal
+    next(err);
+  }
+});
+
+// DELETE CATEGORY
+router.delete("/:id", (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    categoryController.deleteCategory(id, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// UPDATE TODO
+router.put("/:id", (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    categoryController.updateCategory(id, req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+module.exports = router;

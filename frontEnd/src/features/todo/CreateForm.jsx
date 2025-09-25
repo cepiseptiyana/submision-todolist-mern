@@ -25,7 +25,7 @@ const CreateForm = (props) => {
 
       const response = await createTodo(todoData);
 
-      setResponse(response.message);
+      setResponse(response);
     } catch (err) {
       setResponse(err);
     }

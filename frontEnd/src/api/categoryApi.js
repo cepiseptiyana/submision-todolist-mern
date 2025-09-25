@@ -16,7 +16,7 @@ export const getAll = async () => {
   return data;
 };
 
-// GET TODO PAGINATIONS
+// GET CATEGORY PAGINATIONS
 export const getCategoryPagination = async (
   page = 1,
   perPage = 10,
@@ -41,7 +41,7 @@ export const getCategoryPagination = async (
   return data;
 };
 
-// GET TODO getById
+// GET CATEGORY getById
 export const getById = async (params) => {
   const res = await fetch(`${API_BASE}/${params}`, {
     method: "GET",
@@ -57,7 +57,7 @@ export const getById = async (params) => {
   return data;
 };
 
-// CREATE NEW TODO
+// CREATE NEW CATEGORY
 export const createCategory = async (todoData) => {
   const res = await fetch(API_BASE, {
     method: "POST",
@@ -74,7 +74,7 @@ export const createCategory = async (todoData) => {
   return data;
 };
 
-// DELETE TODO
+// DELETE CATEGORY
 export const deleteCategory = async (id) => {
   const res = await fetch(`${API_BASE}/${id}`, {
     method: "DELETE",
@@ -90,7 +90,7 @@ export const deleteCategory = async (id) => {
   return data;
 };
 
-// UPDATE TODO
+// UPDATE CATEGORY
 export const updateCategory = async (id, dataCategory) => {
   const res = await fetch(`${API_BASE}/${id}`, {
     method: "PUT",

@@ -72,57 +72,6 @@ git clone https://github.com/cepiseptiyana/submision-todolist-mern.git
 npm install
 ```
 
-3. install express js versi 5x:
-
-```bash
-npm install express
-```
-
-4. install joi schema validator versi 18x:
-
-```bash
-npm install joi
-```
-
-5. install CORS versi 2x:
-
-```bash
-npm install cors
-```
-
-6. install ORM sequelize versi 6x:
-
-```bash
-npm install --save sequelize
-```
-
-7. Install PostgreSQL driver dan helper pg versi 8x dan pg-hstore versi 2x:
-
-```bash
-npm install --save pg pg-hstore
-```
-
-8. Migrations Install Sequelize CLI :
-
-```bash
-npm install --save-dev sequelize-cli
-```
-
-9. Inisialisasi Sequelize :
-
-To create an empty project you will need to execute init command.
-
-```bash
-npx sequelize-cli init
-```
-
-Ini akan membuat folder berikut :
-
-- config, contains config file, which tells CLI how to connect with database
-- models, contains all models for your project
-- migrations, contains all migration files
-- seeders, contains all seed files
-
 #### Confiurations
 
 1. Configuration :
@@ -375,4 +324,28 @@ d. Jalankan migration untuk membuat table `todos` ke database :
 npx sequelize-cli db:migrate
 ```
 
+e. Jalankan server backend (di folder `backEnd`):
+
+```bash
+node app
+```
+
 ### Setup Front End
+
+#### install depedencies
+
+1. Masuk ke folder frontEnd :
+
+   - cd `frontEnd`.
+
+2. Install dependencies :
+
+```bash
+npm install
+```
+
+3.  Jalankan server frontEnd (di folder `frontEnd`):
+
+```bash
+npm run dev
+```

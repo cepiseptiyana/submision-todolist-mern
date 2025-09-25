@@ -217,11 +217,11 @@ d. Jalankan migration untuk membuat table `Categories` ke database :
 npx sequelize-cli db:migrate
 ```
 
-#### Generate model + migration untuk table `Todos`
-
 <div align="right">
   <a href="#readme">⬆️ Back to top</a>
 </div>
+
+#### Generate model + migration untuk table `Todos`
 
 a. Generate model + migrations `Todos` :
 

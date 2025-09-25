@@ -219,6 +219,10 @@ npx sequelize-cli db:migrate
 
 #### Generate model + migration untuk table `Todos`
 
+<div align="right">
+  <a href="#readme">⬆️ Back to top</a>
+</div>
+
 a. Generate model + migrations `Todos` :
 
 ```bash
@@ -337,6 +341,10 @@ e. Jalankan server backend (di dalam folder `backEnd`):
 node app
 ```
 
+<div align="right">
+  <a href="#readme">⬆️ Back to top</a>
+</div>
+
 ### Setup Front End
 
 #### install depedencies
@@ -356,6 +364,10 @@ npm install
 ```bash
 npm run dev
 ```
+
+<div align="right">
+  <a href="#readme">⬆️ Back to top</a>
+</div>
 
 # Required Technical Questions
 
@@ -583,3 +595,7 @@ Menggunakan default breakpoints dari Ant Design (xs, sm, md, lg, xl).
 
 - Refactor:
   - Mengganti custome hooks `src/hooks` dengan React-Redux untuk kebutuhan fetching api.
+
+<div align="right">
+  <a href="#readme">⬆️ Back to top</a>
+</div>

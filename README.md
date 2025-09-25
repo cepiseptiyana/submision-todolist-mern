@@ -595,3 +595,7 @@ Menggunakan default breakpoints dari Ant Design (xs, sm, md, lg, xl).
 
 - Refactor:
   - Mengganti custome hooks `src/hooks` dengan React-Redux untuk kebutuhan fetching api.
+
+<div align="right">
+  <a href="#readme">⬆️ Back to top</a>
+</div>

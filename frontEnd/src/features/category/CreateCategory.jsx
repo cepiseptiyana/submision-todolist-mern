@@ -1,7 +1,7 @@
 import React from "react";
 
 // FEATURES
-import CreateForm from "@/features/category/CreateForm";
+import CreateForm from "./components/CreateForm";
 
 const CreateCategory = () => {
   return (

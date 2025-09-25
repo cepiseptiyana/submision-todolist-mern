@@ -1,6 +1,6 @@
 const API_BASE = "http://127.0.0.1:3000/api/todos";
 
-// GET TODO
+// GET TODO PAGINATION
 export const getTodo = async (page = 1, perPage = 10, search = "") => {
   const res = await fetch(
     `${API_BASE}?page=${page}&perPage=${perPage}&search=${encodeURIComponent(

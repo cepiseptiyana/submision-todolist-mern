@@ -4,7 +4,7 @@ import { DeleteOutlined, FormOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 
 // API
-import { deleteCategory } from "./api/categoryApi";
+import { deleteCategory } from "@/api/categoryApi";
 
 const { useBreakpoint } = Grid;
 

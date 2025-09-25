@@ -4,13 +4,14 @@ import { SettingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 
 // API
-import { createTodo } from "./api/todoApi";
+import { createTodo } from "@/api/todoApi";
 
 const { TextArea } = Input;
 
 const CreateForm = (props) => {
-  const { title } = props;
+  const { title, categories } = props;
   const [messageResponse, setResponse] = React.useState(null);
+
   const navigate = useNavigate();
 
   // handleCreateData
@@ -112,13 +113,10 @@ const CreateForm = (props) => {
             <Form.Item label="Category" name="category_id">
               <Select
                 placeholder={"Select a Category"}
-                options={[
-                  { value: 1, label: <span>Work</span> },
-                  { value: 2, label: <span>Personal</span> },
-                  { value: 3, label: <span>Shopping</span> },
-                  { value: 4, label: <span>Belajar</span> },
-                  { value: 5, label: <span>bermain</span> },
-                ]}
+                options={categories.map((category) => ({
+                  value: category.id,
+                  label: <span>{category.name}</span>,
+                }))}
               />
             </Form.Item>
 

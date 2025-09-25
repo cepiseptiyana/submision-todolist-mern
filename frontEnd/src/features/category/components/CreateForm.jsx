@@ -4,12 +4,11 @@ import { SettingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 
 // API
-import { createCategory } from "./api/categoryApi";
+import { createCategory } from "@/api/categoryApi";
 
 const CreateForm = (props) => {
-  const [messageResponse, setResponse] = React.useState(null);
   const { title } = props;
-
+  const [messageResponse, setResponse] = React.useState(null);
   const [form] = Form.useForm();
 
   const navigate = useNavigate();

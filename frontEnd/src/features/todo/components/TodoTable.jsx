@@ -4,13 +4,17 @@ import { DeleteOutlined, FormOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 
 // API
-import { deleteTodo } from "./api/todoApi";
+import { deleteTodo } from "@/api/todoApi";
 
 const { useBreakpoint } = Grid;
 
 const TodoTable = (props) => {
   const { page, setPage, todos, total } = props;
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    console.log(todos);
+  }, [todos]);
 
   // responsive
   const screens = useBreakpoint();
@@ -56,6 +60,13 @@ const TodoTable = (props) => {
         if (priority === "medium") return <Tag color="yellow">{priority}</Tag>;
         if (priority === "low") return <Tag color="green">{priority}</Tag>;
       },
+    },
+
+    {
+      title: "Due Date",
+      dataIndex: "due_date",
+      key: "due_date",
+      render: (date) => new Date(date).toLocaleDateString(), // "23/9/2025"
     },
 
     {

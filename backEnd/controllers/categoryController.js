@@ -2,7 +2,26 @@ const { Op } = require("sequelize");
 const Joi = require("joi");
 const { Category } = require("../models");
 
-// GET CATEGORIES
+// GET ALL
+module.exports.getAll = async (req, res) => {
+  try {
+    const categories = await Category.findAll();
+
+    if (!categories) {
+      return res
+        .status(404)
+        .json({ status: false, data: null, message: "Category not found" });
+    }
+
+    res
+      .status(200)
+      .json({ status: true, data: categories, message: "Get all" });
+  } catch (err) {
+    res.status(500).json({ status: false, message: "Internal Server Error" });
+  }
+};
+
+// GET CATEGORIES PAGINATIONS
 module.exports.getAllCategories = async (
   req,
   res,
@@ -25,7 +44,7 @@ module.exports.getAllCategories = async (
 
     // Jika tidak ada data
     if (rows.length === 0) {
-      return res.status(200).json({
+      return res.status(404).json({
         status: false,
         message: "No Categories found",
         data: [],
@@ -62,7 +81,7 @@ module.exports.getTodoById = async (req, res, id) => {
 
     if (!category) {
       return res
-        .status(500)
+        .status(404)
         .json({ status: false, data: null, message: "Category not found" });
     }
 
@@ -87,7 +106,7 @@ module.exports.createCategory = async (req, res) => {
     const { error, value } = schema.validate(body);
     if (error) {
       return res
-        .status(400)
+        .status(404)
         .json({ status: false, message: error.details[0].message });
     }
 
@@ -141,7 +160,7 @@ module.exports.updateCategory = async (id, req, res) => {
 
     if (!category) {
       res
-        .status(500)
+        .status(404)
         .json({ status: false, data: null, message: "Category not found" });
     }
 

@@ -3,8 +3,17 @@ const express = require("express");
 
 const router = express.Router();
 
-// GET ALL CATEGORIES
+// GET ALL
 router.get("/", (req, res, next) => {
+  try {
+    categoryController.getAll(req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET ALL CATEGORIES
+router.get("/pagination", (req, res, next) => {
   try {
     const page = Number(req.query.page) || 1;
     const perPage = Number(req.query.perPage) || 10;

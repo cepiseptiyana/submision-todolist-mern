@@ -6,13 +6,13 @@ import LayoutTemp from "@/template/LayoutTemp";
 // Pages
 // TODOS
 import Todo from "@/pages/Todo";
-import CreateTodo from "@/pages/CreateTodo";
-import EditTodo from "@/pages/EditTodo";
-import ManageCategories from "@/pages/ManageCategories";
+import CreateTodo from "@/features/todo/CreateTodo";
+import EditTodo from "@/features/todo/EditTodo";
 
 // CATEGORY
-import CreateCategory from "@/pages/CreateCategory";
-import EditCategory from "@/pages/EditCategory";
+import ManageCategories from "@/pages/ManageCategories";
+import CreateCategory from "@/features/category/CreateCategory";
+import EditCategory from "@/features/category/EditCategory";
 
 const router = createBrowserRouter([
   // ROUTE TODOS

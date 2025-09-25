@@ -1,12 +1,10 @@
 import React from "react";
-import { Button, Form, Input, Grid, ColorPicker, Alert } from "antd";
+import { Button, Form, Input, ColorPicker, Alert } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 
-import dayjs from "dayjs";
-
 // API
-import { updateCategory, getById } from "./api/categoryApi";
+import { updateCategory, getById } from "@/api/categoryApi";
 
 const EditForm = (props) => {
   const [editDataCategory, setEditCategory] = React.useState(null);

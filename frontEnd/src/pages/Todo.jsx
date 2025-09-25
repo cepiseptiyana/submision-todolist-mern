@@ -3,10 +3,10 @@ import { Button, Input } from "antd";
 import { useNavigate } from "react-router";
 
 // Features
-import TodoTable from "@/features/todo/TodoTable";
+import TodoTable from "@/features/todo/components/TodoTable";
 
 // HOOKS
-import { useTodos } from "@/features/todo/hooks/useTodos";
+import { useTodos } from "@/hooks/useTodos";
 
 const { Search } = Input;
 

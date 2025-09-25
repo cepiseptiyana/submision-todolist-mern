@@ -8,15 +8,15 @@ const { Search } = Input;
 import { useNavigate } from "react-router";
 
 // FEATURES
-import TableCategory from "@/features/category/TableCategory";
+import TableCategory from "@/features/category/components/TableCategory";
 
 // HOOKS
-import { useCategories } from "@/features/category/hooks/useCategories";
+import { useCategoriesPagination } from "@/hooks/useCategoriesPagination";
 
 const ManageCategories = () => {
   const [page, setPage] = React.useState(1);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const { categories, loading, error, total } = useCategories(
+  const { categories, loading, error, total } = useCategoriesPagination(
     page,
     10,
     searchTerm

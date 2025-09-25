@@ -1,18 +1,16 @@
 import { useState, useEffect } from "react";
-import { getCategory } from "../api/categoryApi";
+import { getAll } from "@/api/categoryApi";
 
-export const useCategories = (page, perPage, searchTerm) => {
+export const useGetCategories = (page, perPage, searchTerm) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [total, setTotal] = useState(0); // total data dari backend
 
-  const fetchTodos = async () => {
+  const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await getCategory(page, perPage, searchTerm);
+      const response = await getAll();
       setCategories(response.data);
-      setTotal(response.pagination?.total || 0);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -22,8 +20,8 @@ export const useCategories = (page, perPage, searchTerm) => {
 
   // Fetch setiap page / searchTerm berubah
   useEffect(() => {
-    fetchTodos();
+    fetchCategories();
   }, [page, perPage, searchTerm]);
 
-  return { categories, loading, error, total, fetchTodos };
+  return { categories, loading, error };
 };

@@ -1,9 +1,29 @@
 const API_BASE = "http://127.0.0.1:3000/api/categories";
 
-// GET TODO
-export const getCategory = async (page = 1, perPage = 10, search = "") => {
+// GET ALL
+export const getAll = async () => {
+  const res = await fetch(`${API_BASE}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    // lempar error lengkap, termasuk message dari backend
+    throw { status: res.status, ...data };
+  }
+  return data;
+};
+
+// GET TODO PAGINATIONS
+export const getCategoryPagination = async (
+  page = 1,
+  perPage = 10,
+  search = ""
+) => {
   const res = await fetch(
-    `${API_BASE}?page=${page}&perPage=${perPage}&search=${encodeURIComponent(
+    `${API_BASE}/pagination?page=${page}&perPage=${perPage}&search=${encodeURIComponent(
       search
     )}`,
     {

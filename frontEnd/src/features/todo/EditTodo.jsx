@@ -2,18 +2,18 @@ import React from "react";
 import { useParams } from "react-router";
 
 // FEATURES
-import EditForm from "@/features/category/EditForm";
+import EditForm from "./components/EditForm";
 
-const EditCategory = () => {
+const EditTodo = () => {
   const { id } = useParams();
 
   return (
     <>
       <section style={{ paddingTop: 100 }}>
-        <EditForm title="Category / Edit" params={id} />
+        <EditForm title="Todo / Edit" params={id} />
       </section>
     </>
   );
 };
 
-export default EditCategory;
+export default EditTodo;

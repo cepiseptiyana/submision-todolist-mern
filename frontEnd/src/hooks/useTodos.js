@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getTodo } from "../api/todoApi";
+import { getTodo } from "@/api/todoApi";
 
 export const useTodos = (page, perPage, searchTerm) => {
   const [todos, setTodos] = useState([]);
@@ -25,5 +25,5 @@ export const useTodos = (page, perPage, searchTerm) => {
     fetchTodos();
   }, [page, perPage, searchTerm]);
 
-  return { todos, loading, error, total, fetchTodos };
+  return { todos, loading, error, total };
 };

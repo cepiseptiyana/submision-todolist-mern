@@ -135,6 +135,11 @@ npx sequelize-cli db:seed:all
 node app
 ```
 
+4. Test Api Postman Get `Todos` dan `Categories`:
+
+- GET http://localhost:3000/api/todos
+- GET http://localhost:3000/api/categories
+
 <div align="right">
   <a href="#readme">⬆️ Back to top</a>
 </div>

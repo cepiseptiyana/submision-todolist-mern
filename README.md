@@ -72,13 +72,6 @@ git clone https://github.com/cepiseptiyana/submision-todolist-mern.git
 npm install
 ```
 
-3. Inisialisasi migration :
-   This will create following folders config, models, migrations, seeders
-
-```bash
-npx sequelize-cli init
-```
-
 #### Confiurations
 
 1. Configuration :
@@ -121,6 +114,12 @@ Masuk ke file berikut :
 
 ```bash
 npx sequelize-cli db:create
+```
+
+3. Jalankan Migrate untuk buat table `todos` dan `categories` :
+
+```bash
+npx sequelize-cli db:migrate
 ```
 
 4. Jalankan Sedeer :

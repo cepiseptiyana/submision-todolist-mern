@@ -277,6 +277,10 @@ Backend mengembalikan data beserta informasi pagination:
 - Index pada kolom category_id mempercepat join dengan tabel Categories.
 - Index tambahan pada title membantu performa pencarian.
 
+<div align="right">
+  <a href="#readme">⬆️ Back to top</a>
+</div>
+
 ## Technical Decision Questions
 
 1. #### How did you implement responsive design?
@@ -382,6 +386,10 @@ menggunakan struktur folder featured based.
 
 - Validasi frontend → untuk pengalaman pengguna (cegah input salah lebih cepat).
 - Validasi backend → untuk keamanan dan konsistensi data (tidak percaya 100% ke client).
+
+<div align="right">
+  <a href="#readme">⬆️ Back to top</a>
+</div>
 
 ## Testing & Quality Questions
 

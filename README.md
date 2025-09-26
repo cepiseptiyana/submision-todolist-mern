@@ -48,35 +48,41 @@ Aplikasi ini adalah **TodoList App** yang dibangun dengan arsitektur **Frontend�
 
 ### Clone Repository
 
-1. clone the repo
+1. #### clone the repo
 
 ```bash
 git clone https://github.com/cepiseptiyana/submision-todolist-mern.git
 ```
 
-2. Masuk ke repo :
+2. #### Masuk ke repo :
 
    - cd `submision-todolist-mern`.
+
+<div align="right">
+  <a href="#readme">⬆️ Back to top</a>
+</div>
 
 ### Setup Backend
 
 #### install depedencies
 
-1. Masuk ke folder backEnd :
+1. #### Masuk ke folder backEnd :
 
    - cd `backEnd`.
 
-2. Install dependencies :
+2. #### Install dependencies :
 
 ```bash
 npm install
 ```
 
+<div align="right">
+  <a href="#readme">⬆️ Back to top</a>
+</div>
+
 #### Confiurations
 
-1. Configuration :
-
-Masuk ke file berikut :
+1. #### Masuk ke file berikut :
 
 - `backend/config/config.js`
 
@@ -109,33 +115,33 @@ Masuk ke file berikut :
 }
 ```
 
-2. Buat database :
+2. #### Buat database :
    Ini akan membuat database `todoList` sesuai konfigurasi development `backend/config/config.js`
 
 ```bash
 npx sequelize-cli db:create
 ```
 
-3. Jalankan Migrate untuk buat table `todos` dan `categories` :
+3. #### Jalankan Migrate untuk buat table `todos` dan `categories` :
 
 ```bash
 npx sequelize-cli db:migrate
 ```
 
-4. Jalankan Sedeer :
+4. #### Jalankan Sedeer :
    ini akan meneksekusi file seeder untuk demo data category dan todos
 
 ```bash
 npx sequelize-cli db:seed:all
 ```
 
-3. Jalankan server backend (di dalam folder `backEnd`):
+5. #### Jalankan server backend (di dalam folder `backEnd`):
 
 ```bash
 node app
 ```
 
-4. Test Api Postman Get `Todos` dan `Categories`:
+6. Test Api Postman Get `Todos` dan `Categories`:
 
 - GET http://localhost:3000/api/todos
 - GET http://localhost:3000/api/categories
@@ -148,17 +154,17 @@ node app
 
 #### install depedencies
 
-1. Masuk ke folder frontEnd :
+1. #### Masuk ke folder frontEnd :
 
    - cd `frontEnd`.
 
-2. Install dependencies :
+2. #### Install dependencies :
 
 ```bash
 npm install
 ```
 
-3.  Jalankan server frontEnd (di dalam folder `frontEnd`):
+3. #### Jalankan server frontEnd (di dalam folder `frontEnd`):
 
 ```bash
 npm run dev

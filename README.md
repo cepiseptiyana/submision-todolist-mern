@@ -172,9 +172,10 @@ npm run dev
 
 ## Database Design Questions
 
-1. What database tables did you create and why?
+1. #### What database tables did you create and why?
 
-- Categories
+- Categories :
+
   a. Purpose : Menyimpan daftar kategori yang bisa digunakan untuk mengelompokkan todo items.
 
   b. Columns :
@@ -187,9 +188,11 @@ npm run dev
 
   c. Reasoning: Memisahkan kategori dari todo agar mudah melakukan filtering dan menambah fleksibilitas di UI.
 
-- Todos
-  a. Purpose: Menyimpan daftar tugas (todo items) yang akan dikelola oleh user.
-  b. Columns:
+- Todos :
+
+  a. Purpose : Menyimpan daftar tugas (todo items) yang akan dikelola oleh user.
+
+  b. Columns :
 
   - id (Primary Key)
   - title → judul tugas
@@ -200,10 +203,12 @@ npm run dev
   - due_date → tanggal tenggat
   - createdAt / updatedAt → timestamp otomatis
 
-  c. Reasoning: Struktur ini memungkinkan setiap todo dikaitkan ke satu kategori dan memiliki field tambahan untuk pengelolaan dan visualisasi di UI nya.
+  c. Reasoning : Struktur ini memungkinkan setiap todo dikaitkan ke satu kategori dan memiliki field tambahan untuk pengelolaan dan visualisasi di UI nya.
 
-- Relationships:
+- Relationships :
+
   a. One-to-Many: Satu kategori (Categories) dapat memiliki banyak todo (Todos).
+
   b. Di Sequelize:
 
   ```js
@@ -216,9 +221,13 @@ npm run dev
   b. Bisa menambahkan field tambahan ke kategori tanpa mengubah table Todos.
   c. Bisa menambahkan field Category ke Todo untuk kebutuhan UI.
 
-2. How did you handle pagination and filtering in the database?
+<div align="right">
+  <a href="#readme">⬆️ Back to top</a>
+</div>
 
-a. Pagination :
+2. #### How did you handle pagination and filtering in the database?
+
+#### Pagination :
 
 #### fetch Frontend (React):
 
@@ -270,7 +279,7 @@ Backend mengembalikan data beserta informasi pagination:
 
 ## Technical Decision Questions
 
-1. How did you implement responsive design?
+1. #### How did you implement responsive design?
 
 #### Breakpoints:
 
@@ -292,8 +301,9 @@ Menggunakan default breakpoints dari Ant Design (xs, sm, md, lg, xl).
 - Form, Table dan Input yang otomatis full width di layar kecil.
 - Navbar yang otomatis berubah style setiap ukuran layar md.
 
-2. How did you structure your React components?
-   menggunakan struktur folder featured based.
+2. #### How did you structure your React components?
+
+menggunakan struktur folder featured based.
 
 #### Component Hierarchy:
 
@@ -375,12 +385,12 @@ Menggunakan default breakpoints dari Ant Design (xs, sm, md, lg, xl).
 
 ## Testing & Quality Questions
 
-1. What did you choose to unit test and why?
+1. #### What did you choose to unit test and why?
 
 - Untuk submission ini saya belum membuat unit test.
 - Fokus utama saya masih pada implementasi fitur utama (CRUD, pagination, integrasi frontend-backend).
 
-2. If you had more time, what would you improve or add?
+2. #### If you had more time, what would you improve or add?
 
 - Testing: Tambah unit test dengan Jest atau juga dengan React Testing Library(RTL) untuk memastikan fungsi berjalan sesuai ekspektasi.
 - Technical debt:

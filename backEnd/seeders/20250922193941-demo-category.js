@@ -34,6 +34,12 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+        {
+          name: "Bermain",
+          color: "#6B3F69",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
       ],
       {}
     );

@@ -15,8 +15,8 @@ module.exports = {
 
     await queryInterface.bulkInsert("Todos", [
       {
-        title: "Belajar Node.js",
-        description: "Pelajari dasar Node.js dan HTTP module",
+        title: "bekerja",
+        description: "persiapan materi dan tugas.",
         completed: true,
         priority: "high",
         due_date: new Date("2025-09-30"),
@@ -26,23 +26,33 @@ module.exports = {
       },
 
       {
-        title: "Belajar Sequelize",
-        description: "Coba migration, model, dan seeder",
+        title: "makan malam",
+        description: "kumpul bareng teman dan makan bersama.",
         completed: false,
         priority: "medium",
         due_date: new Date("2025-10-05"),
-        category_id: 2, // id kategori Pekerjaan
+        category_id: 2, // id kategori
         createdAt: new Date(),
         updatedAt: new Date(),
       },
 
       {
         title: "Belajar coding",
-        description: "Coba nodejs, mysql, dan ORM",
+        description: "belajar nodejs, mysql, dan ORM",
         completed: true,
         priority: "medium",
         due_date: new Date("2025-10-10"),
-        category_id: 3, // id kategori Pekerjaan
+        category_id: 3, // id kategori
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        title: "Bermain",
+        description: "bermain di taman bersam adik.",
+        completed: true,
+        priority: "medium",
+        due_date: new Date("2025-10-10"),
+        category_id: 4, // id kategori
         createdAt: new Date(),
         updatedAt: new Date(),
       },
